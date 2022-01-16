@@ -126,9 +126,9 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		changeSelection();
 		reloadCheckboxes();
 
-                #if MOBILE_CONTROLS_ALLOWED
-		addVirtualPad(FULL, A_B_C);
-		#end
+		#if mobileC
+        addVirtualPad(FULL, A_B);
+        #end
 	}
 
 	public function addOption(option:Option) {
@@ -151,9 +151,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 
 		if (controls.BACK) {
+			MusicBeatState.resetState();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-                        ClientPrefs.saveSettings();
-			MusicBeatState.switchState(FlxG.state);
 		}
 
 		if(nextAccept <= 0)
@@ -245,7 +244,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				}
 			}
 
-			if(controls.RESET#if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonC.justPressed #end)
+			if(controls.RESET)
 			{
 				for (i in 0...optionsArray.length)
 				{
