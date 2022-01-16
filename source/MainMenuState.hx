@@ -209,6 +209,8 @@ class MainMenuState extends MusicBeatState
 
 	var selectedSomethin:Bool = false;
 
+	var selectedSomethin:Bool = false;
+
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music.volume < 0.8)
@@ -216,7 +218,7 @@ class MainMenuState extends MusicBeatState
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
 
-		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
+		var lerpVal:Float = CoolUtil.boundTo(elapsed * 5.6, 0, 1);
 		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
 
 		if (!selectedSomethin)
@@ -242,14 +244,10 @@ class MainMenuState extends MusicBeatState
 
 			if (controls.ACCEPT)
 			{
-				if (optionShit[curSelected] == 'donate')
-				{
-					CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
-				}
-				else
-				{
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
+
+					
 
 					menuItems.forEach(function(spr:FlxSprite)
 					{
@@ -263,10 +261,9 @@ class MainMenuState extends MusicBeatState
 						menuItems.members[0].y -= 1;
 						menuItems.members[0].scale.set(0.97,0.97);
 						spr.animation.play('go');
-						
-								var daChoice:String = optionShit[curSelected];
+						var daChoice:String = optionShit[curSelected];
 
-								switch (daChoice)
+						switch (daChoice)
 								{
 									case 'story_mode':
 										MusicBeatState.switchState(new StoryMenuState());
@@ -279,9 +276,6 @@ class MainMenuState extends MusicBeatState
 								}
 							});
 						}
-					});
-				
-			
 			else if (FlxG.keys.anyJustPressed(debugKeys) #if mobileC || _virtualpad.button7.justPressed #end)
 			{
 				selectedSomethin = true;
