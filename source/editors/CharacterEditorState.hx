@@ -197,8 +197,8 @@ class CharacterEditorState extends MusicBeatState
 		FlxG.mouse.visible = true;
 		reloadCharacterOptions();
 
-		#if MOBILE_CONTROLS_ALLOWED
-		addVirtualPad(FULL, A_B_C_X_Y_Z);
+		#if mobileC
+		addVirtualPad(FULL, A_B_X_Y_C_D);
 
 		var camcontrol = new FlxCamera();
 		FlxG.cameras.add(camcontrol);
@@ -519,7 +519,7 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.name = "Character";
 
 		imageInputText = new FlxUIInputText(15, 30, 200, 'characters/BOYFRIEND', 8);
-		imageInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;	
+		imageInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;			
 		var reloadImage:FlxButton = new FlxButton(imageInputText.x + 210, imageInputText.y - 3, "Reload Image", function()
 		{
 			char.imageFile = imageInputText.text;
@@ -541,7 +541,7 @@ class CharacterEditorState extends MusicBeatState
 			});
 
 		healthIconInputText = new FlxUIInputText(15, imageInputText.y + 35, 75, leHealthIcon.getCharacter(), 8);
-		healthIconInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;	
+		healthIconInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;			
 
 		singDurationStepper = new FlxUINumericStepper(15, healthIconInputText.y + 45, 0.1, 4, 0, 999, 1);
 
@@ -624,7 +624,7 @@ class CharacterEditorState extends MusicBeatState
 		animationNameInputText = new FlxUIInputText(animationInputText.x, animationInputText.y + 35, 150, '', 8);
 		animationNameInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;		
 		animationIndicesInputText = new FlxUIInputText(animationNameInputText.x, animationNameInputText.y + 40, 250, '', 8);
-		animationIndicesInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;
+		animationIndicesInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;		
 		animationNameFramerate = new FlxUINumericStepper(animationInputText.x + 170, animationInputText.y, 1, 24, 0, 240, 0);
 		animationLoopCheckBox = new FlxUICheckBox(animationNameInputText.x + 170, animationNameInputText.y - 1, null, null, "Should it Loop?", 100);
 
@@ -1060,7 +1060,7 @@ class CharacterEditorState extends MusicBeatState
 			}
 		}
 		#else
-		characterList = CoolUtil.coolTextFile(Paths.txt('characterList'));
+		characterList = CoolUtil.coolTextFile(Main.getDataPath() + Paths.txt('characterList'));
 		#end
 
 		charDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(characterList, true));
@@ -1087,7 +1087,7 @@ class CharacterEditorState extends MusicBeatState
 			if ((touch.overlaps(imageInputText) || touch.overlaps(healthIconInputText) || touch.overlaps(animationInputText) || touch.overlaps(animationNameInputText) || touch.overlaps(animationIndicesInputText)) && touch.justPressed) { //overlaps check shit for keyboard appearing on android 
 				FlxG.stage.window.textInputEnabled = true;
 			}
-		}//thanks sirox
+		}
 		if(char.animationsArray[curAnim] != null) {
 			textAnim.text = char.animationsArray[curAnim].anim;
 
@@ -1102,12 +1102,12 @@ class CharacterEditorState extends MusicBeatState
 		var inputTexts:Array<FlxUIInputText> = [animationInputText, imageInputText, healthIconInputText, animationNameInputText, animationIndicesInputText];
 		for (i in 0...inputTexts.length) {
 			if(inputTexts[i].hasFocus) {
-				if(FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V && Clipboard.text != null) { //Copy paste
+				if(((FlxG.keys.pressed.CONTROL && FlxG.keys.justPressed.V) || FlxG.keys.justPressed.SLASH) && Clipboard.text != null) { //Copy paste
 					inputTexts[i].text = ClipboardAdd(inputTexts[i].text);
 					inputTexts[i].caretIndex = inputTexts[i].text.length;
 					getEvent(FlxUIInputText.CHANGE_EVENT, inputTexts[i], null, []);
 				}
-				if(FlxG.keys.justPressed.ENTER) {
+				if(FlxG.keys.justPressed.ENTER #if android || FlxG.android.justReleased.BACK #end) {
 					inputTexts[i].hasFocus = false;
 				}
 				FlxG.sound.muteKeys = [];
@@ -1122,7 +1122,7 @@ class CharacterEditorState extends MusicBeatState
 		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 
 		if(!charDropDown.dropPanel.visible) {
-			if (FlxG.keys.justPressed.ESCAPE #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonB.justPressed #end) {
+			if (FlxG.keys.justPressed.ESCAPE #if mobileC || _virtualpad.buttonB.justPressed #end) {
 				if(goToPlayState) {
 					MusicBeatState.switchState(new PlayState());
 				} else {
@@ -1133,38 +1133,38 @@ class CharacterEditorState extends MusicBeatState
 				return;
 			}
 			
-			if (FlxG.keys.justPressed.R #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonZ.justPressed #end) {
+			if (FlxG.keys.justPressed.R #if mobileC || _virtualpad.buttonD.justPressed #end) {
 				FlxG.camera.zoom = 1;
 			}
 
-			if ((FlxG.keys.pressed.E #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonX.justPressed #end) && FlxG.camera.zoom < 3) {
+			if ((FlxG.keys.pressed.E #if mobileC || _virtualpad.buttonX.justPressed #end) && FlxG.camera.zoom < 3) {
 				FlxG.camera.zoom += elapsed * FlxG.camera.zoom;
 				if(FlxG.camera.zoom > 3) FlxG.camera.zoom = 3;
 			}
-			if ((FlxG.keys.pressed.Q #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonY.justPressed #end) && FlxG.camera.zoom > 0.1) {
+			if ((FlxG.keys.pressed.Q #if mobileC || _virtualpad.buttonY.justPressed #end) && FlxG.camera.zoom > 0.1) {
 				FlxG.camera.zoom -= elapsed * FlxG.camera.zoom;
 				if(FlxG.camera.zoom < 0.1) FlxG.camera.zoom = 0.1;
 			}
 
-			if (FlxG.keys.pressed.I || FlxG.keys.pressed.J || FlxG.keys.pressed.K || FlxG.keys.pressed.L #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonUp.justPressed || _virtualpad.buttonDown.justPressed || _virtualpad.buttonLeft.justPressed || _virtualpad.buttonRight.justPressed && _virtualpad.buttonC.justPressed #end)
+			if ((FlxG.keys.pressed.I || FlxG.keys.pressed.J || FlxG.keys.pressed.K || FlxG.keys.pressed.L #if mobileC || _virtualpad.buttonUp.justPressed #end #if mobileC || _virtualpad.buttonDown.justPressed #end #if mobileC || _virtualpad.buttonLeft.justPressed #end #if mobileC || _virtualpad.buttonRight.justPressed #end) #if mobileC && _virtualpad.buttonC.justPressed #end)
 			{
 				var addToCam:Float = 500 * elapsed;
 				if (FlxG.keys.pressed.SHIFT)
 					addToCam *= 4;
 
-				if (FlxG.keys.pressed.I)
+				if (FlxG.keys.pressed.I #if mobileC || _virtualpad.buttonUp.justPressed #end)
 					camFollow.y -= addToCam;
-				else if (FlxG.keys.pressed.K)
+				else if (FlxG.keys.pressed.K #if mobileC || _virtualpad.buttonDown.justPressed #end)
 					camFollow.y += addToCam;
 
-				if (FlxG.keys.pressed.J)
+				if (FlxG.keys.pressed.J #if mobileC || _virtualpad.buttonLeft.justPressed #end)
 					camFollow.x -= addToCam;
-				else if (FlxG.keys.pressed.L)
+				else if (FlxG.keys.pressed.L #if mobileC || _virtualpad.buttonRight.justPressed #end)
 					camFollow.x += addToCam;
 			}
 
 			if(char.animationsArray.length > 0) {
-				if (FlxG.keys.justPressed.W #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonA.justPressed #end)
+				if (FlxG.keys.justPressed.W #if mobileC || _virtualpad.buttonA.justPressed #end)
 				{
 					curAnim -= 1;
 				}
@@ -1180,13 +1180,13 @@ class CharacterEditorState extends MusicBeatState
 				if (curAnim >= char.animationsArray.length)
 					curAnim = 0;
 
-				if (FlxG.keys.justPressed.S || FlxG.keys.justPressed.W || FlxG.keys.justPressed.SPACE)
+				if (FlxG.keys.justPressed.S || FlxG.keys.justPressed.W || FlxG.keys.justPressed.SPACE #if mobileC || _virtualpad.buttonA.justPressed #end)
 				{
 					char.playAnim(char.animationsArray[curAnim].anim, true);
 					genBoyOffsets();
 				}
 
-				if (FlxG.keys.justPressed.R #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonZ.justPressed #end)
+				if (controls.RESET #if mobileC || _virtualpad.buttonD.justPressed #end)
 				{
 					char.animationsArray[curAnim].offsets = [0, 0];
 					
@@ -1196,10 +1196,10 @@ class CharacterEditorState extends MusicBeatState
 				}
 
 				var controlArray:Array<Bool> = [
-					FlxG.keys.justPressed.LEFT #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonLeft.justPressed #end,
-					FlxG.keys.justPressed.RIGHT #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonRight.justPressed #end,
-					FlxG.keys.justPressed.UP #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonUp.justPressed #end,
-					FlxG.keys.justPressed.DOWN #if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonDown.justPressed #end
+					FlxG.keys.justPressed.LEFT #if mobileC || _virtualpad.buttonLeft.justPressed #end,
+					FlxG.keys.justPressed.RIGHT #if mobileC || _virtualpad.buttonRight.justPressed #end,
+					FlxG.keys.justPressed.UP #if mobileC || _virtualpad.buttonUp.justPressed #end,
+					FlxG.keys.justPressed.DOWN #if mobileC || _virtualpad.buttonDown.justPressed #end
 				];			
 				
 				for (i in 0...controlArray.length) {
@@ -1232,54 +1232,14 @@ class CharacterEditorState extends MusicBeatState
 		super.update(elapsed);
 	}
 
-	var _file:FileReference;
-	/*private function saveOffsets()
+	private function saveOffsets()
 	{
 		var data:String = '';
 		for (anim => offsets in char.animOffsets) {
 			data += anim + ' ' + offsets[0] + ' ' + offsets[1] + '\n';
 		}
-
-		if (data.length > 0)
-		{
-			_file = new FileReference();
-			_file.addEventListener(Event.COMPLETE, onSaveComplete);
-			_file.addEventListener(Event.CANCEL, onSaveCancel);
-			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data, daAnim + "Offsets.txt");
-		}
-	}*/
-
-	function onSaveComplete(_):Void
-	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-		FlxG.log.notice("Successfully saved file.");
-	}
-
-	/**
-		* Called when the save file dialog is cancelled.
-		*/
-	function onSaveCancel(_):Void
-	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-	}
-
-	/**
-		* Called if there is an error while saving the gameplay recording.
-		*/
-	function onSaveError(_):Void
-	{
-		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
-		_file.removeEventListener(Event.CANCEL, onSaveCancel);
-		_file.removeEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-		_file = null;
-		FlxG.log.error("Problem saving file");
+		
+		openfl.system.System.setClipboard(data.trim());
 	}
 
 	function saveCharacter() {
@@ -1299,19 +1259,8 @@ class CharacterEditorState extends MusicBeatState
 		};
 
 		var data:String = Json.stringify(json, "\t");
-
-		if (data.length > 0)
-		{
-			#if desktop
-			_file = new FileReference();
-			_file.addEventListener(Event.COMPLETE, onSaveComplete);
-			_file.addEventListener(Event.CANCEL, onSaveCancel);
-			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data, daAnim + ".json");
-            #else
-            openfl.system.System.setClipboard(data.trim());
-            #end
-		}
+		
+		openfl.system.System.setClipboard(data.trim());
 	}
 
 	function ClipboardAdd(prefix:String = ''):String {
