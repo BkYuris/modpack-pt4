@@ -62,27 +62,19 @@ class CreditsState extends MusicBeatState
 				}
 				creditsStuff.push(['']);
 			}
-		};
-		var folder = "";
-			var creditsFile:String = Paths.mods('data/credits.txt');
-			if (FileSystem.exists(creditsFile))
-			{
-				var firstarray:Array<String> = File.getContent(creditsFile).split('\n');
-				for(i in firstarray)
-				{
-					var arr:Array<String> = i.replace('\\n', '\n').split("::");
-					if(arr.length >= 5) arr.push(folder);
-					creditsStuff.push(arr);
-				}
-				creditsStuff.push(['']);
-			}
+		}
 		#end
 
-		var pisspoop:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG Color
-			['Psych Engine Android'],
+		var pisspoop:Array<Array<String>> = [ //Name - Icon name - Description - Link - BG CColo
+['ModPack Creator'],
+['B.K [Yuri]','bkyuri','The Creator of ModPack','https://youtube.com/channel/UCCGro2NXtGFt9SvPLMA3dpg','F73838'],
+		['Psych Engine Android'],
 			['M.A. Jigsaw',		    'majigsaw',		    'Main Coder of The Port',	 'https://www.youtube.com/channel/UC2Sk7vtPzOvbVzdVTWrribQ',	    'F73838'],
+			['Sirox',		        'sirox',		    'Fixed a lot of shit, added videoBG, help with editors',	                 'https://www.youtube.com/channel/UCqp6FttWJlp67vHT8n-_uKw',	    '261EA9'],		
+			['ELfox',               'elfox',            'Created The Method To Port Modding Features',                    'https://t.me/ELfox513',           '53E52C'],				
+			[''],
 			['Psych Engine Team'],
-			['Shadow Mario',		'shadowmario',		'Main Programmer of Psych Engine',						'https://twitter.com/Shadow_Mario_',	'444444'],
+			['Shadow Mario',		'shadowmario',		'Main Programmer of Psych Engine',						'https://twitter.com/Shadow_Mario_',	'FFDD33'],
 			['RiverOaken',			'riveroaken',		'Main Artist/Animator of Psych Engine',					'https://twitter.com/river_oaken',		'C30085'],
 			['bb-panzu',			'bb-panzu',			'Additional Programmer of Psych Engine',				'https://twitter.com/bbsub3',			'389A58'],
 			[''],
@@ -148,9 +140,9 @@ class CreditsState extends MusicBeatState
 		intendedColor = bg.color;
 		changeSelection();
 
-                #if MOBILE_CONTROLS_ALLOWED
-		addVirtualPad(UP_DOWN, A_B);
-		#end
+		#if mobileC
+        addVirtualPad(UP_DOWN, A_B);
+        #end
 
 		super.create();
 	}

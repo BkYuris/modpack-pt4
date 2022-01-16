@@ -10,12 +10,10 @@ import flixel.input.actions.FlxActionSet;
 import flixel.input.gamepad.FlxGamepadButton;
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.keyboard.FlxKey;
-#if MOBILE_CONTROLS_ALLOWED
 import flixel.group.FlxGroup;
 import ui.Hitbox;
 import ui.FlxVirtualPad;
 import flixel.ui.FlxButton;
-#end
 
 #if (haxe >= "4.0.0")
 enum abstract Action(String) to String from String
@@ -385,7 +383,6 @@ class Controls extends FlxActionSet
 	}
 	#end
 
-	#if MOBILE_CONTROLS_ALLOWED
 	public var trackedinputsUI:Array<FlxActionInput> = [];
 	public var trackedinputsNOTES:Array<FlxActionInput> = [];	
 
@@ -438,7 +435,7 @@ class Controls extends FlxActionSet
 			case A:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonuNOTES(action, virtualPad.buttonA, state));
             case B:
-				inline forEachBound(Control.BACK, (action, state) -> addbuttonuNOTES(action, virtualPad.buttonB, state));
+				inline forEachBound(Control.BACK, (action, state) -> addbuttonuUI(action, virtualPad.buttonB, state));
 			case D:
                 //nothing							
 			case A_B:
@@ -450,10 +447,10 @@ class Controls extends FlxActionSet
 			case A_B_7:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonuNOTES(action, virtualPad.buttonA, state));
 				inline forEachBound(Control.BACK, (action, state) -> addbuttonuNOTES(action, virtualPad.buttonB, state));
-			case A_B_C_X_Y:
+			case A_B_X_Y_D:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonuNOTES(action, virtualPad.buttonA, state));
 				inline forEachBound(Control.BACK, (action, state) -> addbuttonuNOTES(action, virtualPad.buttonB, state));			
-            case A_B_C_X_Y_Z:
+            case A_B_X_Y_C_D:
                 //nothing
 			case A_B_X_Y:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonuNOTES(action, virtualPad.buttonA, state));
@@ -510,10 +507,10 @@ class Controls extends FlxActionSet
 		{
 			case A:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonuUI(action, virtualPad.buttonA, state));
-                        case B:
+            case B:
 				inline forEachBound(Control.BACK, (action, state) -> addbuttonuUI(action, virtualPad.buttonB, state));
 			case D:
-                                //nothing				
+                //nothing				
 			case A_B:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonuUI(action, virtualPad.buttonA, state));
 				inline forEachBound(Control.BACK, (action, state) -> addbuttonuUI(action, virtualPad.buttonB, state));
@@ -523,11 +520,11 @@ class Controls extends FlxActionSet
 			case A_B_C:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonuNOTES(action, virtualPad.buttonA, state));
 				inline forEachBound(Control.BACK, (action, state) -> addbuttonuNOTES(action, virtualPad.buttonB, state));				
-			case A_B_C_X_Y:
+			case A_B_X_Y_D:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonuUI(action, virtualPad.buttonA, state));
 				inline forEachBound(Control.BACK, (action, state) -> addbuttonuUI(action, virtualPad.buttonB, state));	
-                        case A_B_C_X_Y_Z:
-                                //nothing
+            case A_B_X_Y_C_D:
+                //nothing
 			case A_B_X_Y:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonuUI(action, virtualPad.buttonA, state));
 				inline forEachBound(Control.BACK, (action, state) -> addbuttonuUI(action, virtualPad.buttonB, state));
@@ -552,7 +549,6 @@ class Controls extends FlxActionSet
 			}
 		}
 	}	
-	#end	
 
 	override function update()
 	{

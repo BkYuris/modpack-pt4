@@ -20,12 +20,13 @@ import lime.app.Application;
 import Achievements;
 import editors.MasterEditorMenu;
 import flixel.input.keyboard.FlxKey;
+import flixel.util.FlxTimer;
 
 using StringTools;
 
 class MainMenuState extends MusicBeatState
 {
-	public static var psychEngineVersion:String = '0.5.1'; //This is also used for Discord RPC
+	public static var psychEngineVersion:String = '0.5'; //This is also used for Discord RPC
 	public static var curSelected:Int = 0;
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
@@ -54,6 +55,7 @@ class MainMenuState extends MusicBeatState
 		DiscordClient.changePresence("In the Menus", null);
 		#end
 
+		WeekData.setDirectoryFromWeek();
 		debugKeys = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_1'));
 
 		camGame = new FlxCamera();
@@ -151,7 +153,7 @@ class MainMenuState extends MusicBeatState
 		}
 		#end
 
-                #if MOBILE_CONTROLS_ALLOWED
+		#if mobileC
 		addVirtualPad(UP_DOWN, A_B_7);
 		#end
 
@@ -253,7 +255,7 @@ class MainMenuState extends MusicBeatState
 					});
 				}
 			}
-			else if (FlxG.keys.anyJustPressed(debugKeys)#if MOBILE_CONTROLS_ALLOWED || _virtualpad.button7.justPressed #end)
+			else if (FlxG.keys.anyJustPressed(debugKeys) #if mobileC || _virtualpad.button7.justPressed #end)
 			{
 				selectedSomethin = true;
 				MusicBeatState.switchState(new MasterEditorMenu());
@@ -288,6 +290,17 @@ class MainMenuState extends MusicBeatState
 				var add:Float = 0;
 				if(menuItems.length > 4) {
 					add = menuItems.length * 8;
+				FlxTween.tween(spr,{y: -100}, 1.4, {ease: FlxEase.expoInOut});
+
+			spr.angle = -4;
+
+			new FlxTimer().start(0.01, function(tmr:FlxTimer)
+			{
+					if(spr.angle == -4) 
+						FlxTween.angle(spr, spr.angle, 4, 4, {ease: FlxEase.quartInOut});
+					if (spr.angle == 4) 
+						FlxTween.angle(spr, spr.angle, -4, 4, {ease: FlxEase.quartInOut});
+				}, 0);
 				}
 				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y - add);
 				spr.centerOffsets();

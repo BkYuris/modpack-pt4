@@ -5,7 +5,8 @@ import flixel.FlxG;
 import flixel.FlxSubState;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
-#if MOBILE_CONTROLS_ALLOWED
+#if mobileC
+import flixel.FlxCamera;
 import flixel.input.actions.FlxActionInput;
 import ui.FlxVirtualPad;
 #end
@@ -27,11 +28,13 @@ class MusicBeatSubstate extends FlxSubState
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
-	#if MOBILE_CONTROLS_ALLOWED
+	#if mobileC
 	var _virtualpad:FlxVirtualPad;
-	var trackedinputsUI:Array<FlxActionInput> = [];
-	var trackedinputsNOTES:Array<FlxActionInput> = [];
 
+	var trackedinputsUI:Array<FlxActionInput> = [];
+	var trackedinputsNOTES:Array<FlxActionInput> = [];	
+
+	// adding virtualpad to state
 	public function addVirtualPad(?DPad:FlxDPadMode, ?Action:FlxActionMode) {
 		_virtualpad = new FlxVirtualPad(DPad, Action);
 		_virtualpad.alpha = 0.75;
@@ -49,7 +52,7 @@ class MusicBeatSubstate extends FlxSubState
 	}
 	#else
 	public function addVirtualPad(?DPad, ?Action){};
-	#end
+	#end	
 
 	override function update(elapsed:Float)
 	{
@@ -64,7 +67,7 @@ class MusicBeatSubstate extends FlxSubState
 
 
 		super.update(elapsed);
-	}	
+	}
 
 	private function updateCurStep():Void
 	{

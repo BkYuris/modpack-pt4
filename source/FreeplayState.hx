@@ -89,7 +89,7 @@ class FreeplayState extends MusicBeatState
 
 		/*		//KIND OF BROKEN NOW AND ALSO PRETTY USELESS//
 
-		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
+		var initSonglist = CoolUtil.coolTextFile(Main.getDataPath() + Paths.txt('freeplaySonglist'));
 		for (i in 0...initSonglist.length)
 		{
 			if(initSonglist[i] != null && initSonglist[i].length > 0) {
@@ -175,20 +175,31 @@ class FreeplayState extends MusicBeatState
 		textBG.alpha = 0.6;
 		add(textBG);
 
+		#if desktop
 		#if PRELOAD_ALL
-		var leText:String = "Press SPACE / X to listen to the Song / Press CTRL / C to open the Gameplay Changers Menu / Press RESET / Y to Reset your Score and Accuracy.";
+		var leText:String = "Press SPACE to listen to the Song / Press CTRL to open the Gameplay Changers Menu / Press RESET to Reset your Score and Accuracy.";
 		var size:Int = 16;
 		#else
-		var leText:String = "Press CTRL / C to open the Gameplay Changers Menu / Press RESET / Y to Reset your Score and Accuracy.";
+		var leText:String = "Press CTRL to open the Gameplay Changers Menu / Press RESET to Reset your Score and Accuracy.";
 		var size:Int = 18;
 		#end
+		#else
+		#if PRELOAD_ALL
+		var leText:String = "Press X to listen to the Song / Press RED to open the Gameplay Changers Menu / Press Y to Reset your Score and Accuracy.";
+		var size:Int = 16;
+		#else
+		var leText:String = "Press RED to open the Gameplay Changers Menu / Press Y to Reset your Score and Accuracy.";
+		var size:Int = 18;
+		#end		
+		#end
+				
 		var text:FlxText = new FlxText(textBG.x, textBG.y + 4, FlxG.width, leText, size);
 		text.setFormat(Paths.font("vcr.ttf"), size, FlxColor.WHITE, RIGHT);
 		text.scrollFactor.set();
 		add(text);
 
-                #if MOBILE_CONTROLS_ALLOWED
-		addVirtualPad(FULL, A_B_C_X_Y);
+		#if mobileC
+		addVirtualPad(FULL, A_B_X_Y_D);
 		#end
 
 		super.create();
@@ -252,8 +263,8 @@ class FreeplayState extends MusicBeatState
 		var upP = controls.UI_UP_P;
 		var downP = controls.UI_DOWN_P;
 		var accepted = controls.ACCEPT;
-	        var space = FlxG.keys.justPressed.SPACE#if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonX.justPressed #end;
-		var ctrl = FlxG.keys.justPressed.CONTROL#if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonC.justPressed #end;
+		var space = FlxG.keys.justPressed.SPACE#if mobileC || _virtualpad.buttonX.justPressed #end;
+		var ctrl = FlxG.keys.justPressed.CONTROL#if mobileC || _virtualpad.buttonD.justPressed #end;
 
 		var shiftMult:Int = 1;
 		if(FlxG.keys.pressed.SHIFT) shiftMult = 3;
@@ -346,7 +357,7 @@ class FreeplayState extends MusicBeatState
 					
 			destroyFreeplayVocals();
 		}
-		else if(controls.RESET#if MOBILE_CONTROLS_ALLOWED || _virtualpad.buttonY.justPressed #end)
+		else if(controls.RESET #if mobileC || _virtualpad.buttonY.justPressed #end)
 		{
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
 			FlxG.sound.play(Paths.sound('scrollMenu'));

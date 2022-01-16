@@ -185,10 +185,9 @@ class WeekData {
 				var weekFile:WeekData = new WeekData(week);
 				if(i >= originalLength)
 				{
-					#if MODS_ALLOWED
 					weekFile.folder = directory.substring(Paths.mods().length, directory.length-1);
-					#end
 				}
+
 				if((PlayState.isStoryMode && !weekFile.hideStoryMode) || (!PlayState.isStoryMode && !weekFile.hideFreeplay))
 				{
 					weeksLoaded.set(weekToCheck, weekFile);
@@ -200,15 +199,9 @@ class WeekData {
 
 	private static function getWeekFile(path:String):WeekFile {
 		var rawJson:String = null;
-		#if MODS_ALLOWED
 		if(FileSystem.exists(path)) {
 			rawJson = File.getContent(path);
 		}
-		#else
-		if(OpenFlAssets.exists(path)) {
-			rawJson = Assets.getText(path);
-		}
-		#end
 
 		if(rawJson != null && rawJson.length > 0) {
 			return cast Json.parse(rawJson);

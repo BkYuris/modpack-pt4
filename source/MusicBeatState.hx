@@ -13,7 +13,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 import flixel.FlxState;
 import flixel.FlxBasic;
-#if MOBILE_CONTROLS_ALLOWED
+#if mobileC
 import flixel.input.actions.FlxActionInput;
 import ui.FlxVirtualPad;
 #end
@@ -30,11 +30,13 @@ class MusicBeatState extends FlxUIState
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
-	#if MOBILE_CONTROLS_ALLOWED
+	#if mobileC
 	var _virtualpad:FlxVirtualPad;
+
 	var trackedinputsUI:Array<FlxActionInput> = [];
-	var trackedinputsNOTES:Array<FlxActionInput> = [];
-	
+	var trackedinputsNOTES:Array<FlxActionInput> = [];	
+
+	// adding virtualpad to state
 	public function addVirtualPad(?DPad:FlxDPadMode, ?Action:FlxActionMode) {
 		_virtualpad = new FlxVirtualPad(DPad, Action);
 		_virtualpad.alpha = 0.75;
@@ -64,20 +66,6 @@ class MusicBeatState extends FlxUIState
 		}
 		FlxTransitionableState.skipNextTransOut = false;
 	}
-	
-	#if (VIDEOS_ALLOWED && windows)
-	override public function onFocus():Void
-	{
-		FlxVideo.onFocus();
-		super.onFocus();
-	}
-	
-	override public function onFocusLost():Void
-	{
-		FlxVideo.onFocusLost();
-		super.onFocusLost();
-	}
-	#end
 
 	override function update(elapsed:Float)
 	{

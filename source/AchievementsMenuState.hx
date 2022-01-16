@@ -70,9 +70,9 @@ class AchievementsMenuState extends MusicBeatState
 		add(descText);
 		changeSelection();
 
-        #if MOBILE_CONTROLS_ALLOWED
-		addVirtualPad(UP_DOWN, B);
-		#end
+		#if mobileC
+        addVirtualPad(UP_DOWN, B);
+        #end
 
 		super.create();
 	}

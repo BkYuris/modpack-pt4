@@ -20,8 +20,6 @@ using StringTools;
 class Paths
 {
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
-	
-	inline public static var VIDEO_EXT = #if MOBILE_CONTROLS_ALLOWED "webm" #else "mp4" #end;//android can't run mp4
 
 	#if MODS_ALLOWED
 	#if (haxe >= "4.0.0")
@@ -142,7 +140,7 @@ class Paths
 			return file;
 		}
 		#end
-		return Main.getDataPath() + 'assets/videos/$key.$VIDEO_EXT';
+		return Main.getDataPath() + 'assets/videos/$key.webm';
 	}
 
 	static public function sound(key:String, ?library:String):Dynamic
@@ -186,7 +184,7 @@ class Paths
 			return file;
 		}
 		#end
-		return 'songs:assets/songs/${song.toLowerCase().replace(' ', '-')}/Voices.$SOUND_EXT';
+		return returnSongFile(Main.getDataPath() + 'assets/songs/${song.toLowerCase().replace(' ', '-')}/Voices.$SOUND_EXT');
 	}
 
 	inline static public function inst(song:String):Any
@@ -197,7 +195,7 @@ class Paths
 			return file;
 		}
 		#end
-		return 'songs:assets/songs/${song.toLowerCase().replace(' ', '-')}/Inst.$SOUND_EXT';
+		return returnSongFile(Main.getDataPath() + 'assets/songs/${song.toLowerCase().replace(' ', '-')}/Inst.$SOUND_EXT');
 	}
 
 	#if MODS_ALLOWED
@@ -249,7 +247,7 @@ class Paths
 			if(currentLevel != 'shared') {
 				levelPath = getLibraryPathForce(key, currentLevel);
 				if (FileSystem.exists(Main.getDataPath() + levelPath))
-					return File.getContent(Main.getDataPath() + levelPath);
+					return File.getContent(levelPath);
 			}
 
 			levelPath = getLibraryPathForce(key, 'shared');
@@ -268,7 +266,7 @@ class Paths
 			return file;
 		}
 		#end
-		return Main.getDataPath() + 'assets/fonts/$key';
+		return 'assets/fonts/$key';
 	}
 
 	inline static public function fileExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
@@ -347,7 +345,7 @@ class Paths
 	}
 
 	inline static public function modsVideo(key:String) {
-		return modFolders('videos/' + key + '.' + VIDEO_EXT);
+		return modFolders('videos/' + key + '.webm');
 	}
 
 	inline static public function modsMusic(key:String) {
