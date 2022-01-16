@@ -334,7 +334,6 @@ class FreeplayState extends MusicBeatState
 				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
 				if (PlayState.SONG.needsVoices)
 					vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
-					FlxG.camera.shake(0.005, 0.1);
 				else
 					vocals = new FlxSound();
 
