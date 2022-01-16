@@ -104,7 +104,7 @@ class WebmPlayerS extends FlxSprite
         
         if (frameSkipLimit != -1)
 		{
-			videoplayer.SKIP_STEP_LIMIT = frameSkipLimit;	
+			
 		}
 		
 		if (ownCamera) {
@@ -180,8 +180,7 @@ class WebmPlayerS extends FlxSprite
 		
 		if (useSound)
 		{
-			var wasFuckingHit = videoplayer.wasHitOnce;
-			soundMultiplier = videoplayer.renderedCount / videoFrames;
+			
 			
 			if (soundMultiplier > 1)
 			{
