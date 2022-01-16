@@ -96,12 +96,10 @@ class MainMenuState extends MusicBeatState
 		bga.x += 70;
 		bga.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bga);
-
 		camFollow = new FlxObject(0, 0, 1, 1);
 		camFollowPos = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
 		add(camFollowPos);
-
 		// magenta.scrollFactor.set();
 
 		menuItems = new FlxTypedGroup<FlxSprite>();
@@ -119,9 +117,9 @@ class MainMenuState extends MusicBeatState
 			var offset:Float = 108 - (Math.max(optionShit.length, 4) - 4) * 80;
 			var menuItem:FlxSprite = new FlxSprite(0, (i * 160)  + 65);
 			menuItem.frames = tex;
-			menuItem.animation.addByPrefix('idle', optionShit[i] + "-stop", 24);
-			menuItem.animation.addByPrefix('selected', optionShit[i] + "0", 24);
-			menuItem.animation.addByPrefix('go', optionShit[i] + "-go", 24);
+			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic-stop", 24);
+			menuItem.animation.addByPrefix('selected', optionShit[i] + " basic0", 24);
+			menuItem.animation.addByPrefix('go', optionShit[i] + " basic-go", 24);
 			menuItem.animation.play('idle');
 			menuItem.ID = i;
 			menuItem.screenCenter(X);
@@ -150,9 +148,9 @@ class MainMenuState extends MusicBeatState
 		}
         
         cg = new FlxSprite();
-		cg.frames = Paths.getSparrowAtlas('logoBumpin');
+		cg.frames = Paths.getSparrowAtlas('demo/disc_freeplay');
 		cg.antialiasing = ClientPrefs.globalAntialiasing;
-		cg.animation.addByPrefix('idle',"logo bumpin",24);
+		cg.animation.addByPrefix('idle',"monika-yt",24);	
 		cg.animation.play('idle');
 		cg.x -= 850;
 		cg.y -= 500;
@@ -169,7 +167,7 @@ class MainMenuState extends MusicBeatState
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 24, 0, "ModPack Pt.4 Created By Monika", 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "ModPack Demo by Monika", 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
@@ -209,8 +207,6 @@ class MainMenuState extends MusicBeatState
 
 	var selectedSomethin:Bool = false;
 
-	var selectedSomethin:Bool = false;
-
 	override function update(elapsed:Float)
 	{
 		if (FlxG.sound.music.volume < 0.8)
@@ -218,7 +214,7 @@ class MainMenuState extends MusicBeatState
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
 
-		var lerpVal:Float = CoolUtil.boundTo(elapsed * 5.6, 0, 1);
+		var lerpVal:Float = CoolUtil.boundTo(elapsed * 7.5, 0, 1);
 		camFollowPos.setPosition(FlxMath.lerp(camFollowPos.x, camFollow.x, lerpVal), FlxMath.lerp(camFollowPos.y, camFollow.y, lerpVal));
 
 		if (!selectedSomethin)
@@ -244,26 +240,36 @@ class MainMenuState extends MusicBeatState
 
 			if (controls.ACCEPT)
 			{
+				if (optionShit[curSelected] == 'donate')
+				{
+					CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
+				}
+				else
+				{
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 
-					
+					if(ClientPrefs.flashing) FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 
 					menuItems.forEach(function(spr:FlxSprite)
 					{
-						if (curSelected == 0)
-							menuItems.members[0].x += 2;
-						if (curSelected != 1)
-							menuItems.members[1].x -= 1;
+						if (curSelected != spr.ID)
+						{
+							FlxTween.tween(spr, {alpha: 0}, 0.4, {
+								ease: FlxEase.quadOut,
+								onComplete: function(twn:FlxTween)
+								{
+									spr.kill();
+								}
+							});
+						}
 						else
-							menuItems.members[1].x += 1;
-						menuItems.members[0].x -= 2;
-						menuItems.members[0].y -= 1;
-						menuItems.members[0].scale.set(0.97,0.97);
-						spr.animation.play('go');
-						var daChoice:String = optionShit[curSelected];
+						{
+							FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
+							{
+								var daChoice:String = optionShit[curSelected];
 
-						switch (daChoice)
+								switch (daChoice)
 								{
 									case 'story_mode':
 										MusicBeatState.switchState(new StoryMenuState());
@@ -276,6 +282,9 @@ class MainMenuState extends MusicBeatState
 								}
 							});
 						}
+					});
+				}
+			}
 			else if (FlxG.keys.anyJustPressed(debugKeys) #if mobileC || _virtualpad.button7.justPressed #end)
 			{
 				selectedSomethin = true;
@@ -299,11 +308,7 @@ class MainMenuState extends MusicBeatState
 			curSelected = 0;
 		if (curSelected < 0)
 			curSelected = menuItems.length - 1;
-        switch (curSelected)
-		{
-			case 0:
-				cg.animation.play('idle');
-				}
+
 		menuItems.forEach(function(spr:FlxSprite)
 		{
 			spr.animation.play('idle');
@@ -312,13 +317,23 @@ class MainMenuState extends MusicBeatState
 			if (spr.ID == curSelected)
 			{
 				spr.animation.play('selected');
-				switch (spr.ID)
+				var add:Float = 0;
+				if(menuItems.length > 4) {
+				add = menuItems.length * 8;
+			spr.angle = -4;
+				cg.animation.play('idle');
+				FlxTween.tween(cg,{y: titleJSON.titley}, 1.4, {ease: FlxEase.expoInOut});
+			cg.angle = -4;
+			new FlxTimer().start(0.01, function(tmr:FlxTimer)
 				{
-					case 0:
-						spr.offset.x = 10;
-						spr.offset.y = 5;
+					if(cg.angle == -4) 
+						FlxTween.angle(cg, cg.angle, 4, 4, {ease: FlxEase.quartInOut});
+					if (cg.angle == 4) 
+						FlxTween.angle(cg, cg.angle, -4, 4, {ease: FlxEase.quartInOut});
+				}, 0);
 				}
-				FlxG.log.add(spr.frameWidth);
+				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y - add);
+				spr.centerOffsets();
 			}
 		});
 	}
