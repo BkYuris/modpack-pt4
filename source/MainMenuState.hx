@@ -44,8 +44,8 @@ class MainMenuState extends MusicBeatState
 	var camFollow:FlxObject;
 	var camFollowPos:FlxObject;
 	var debugKeys:Array<FlxKey>;
-var cg:FlxSprite;
-var titleJSON:TitleData;
+    var cg:FlxSprite;
+    
 	override function create()
 	{
 		#if desktop
@@ -97,19 +97,16 @@ var titleJSON:TitleData;
 		bga.x += 70;
 		bga.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bga);
+
 		camFollow = new FlxObject(0, 0, 1, 1);
 		camFollowPos = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
 		add(camFollowPos);
+
 		// magenta.scrollFactor.set();
 
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		add(menuItems);
-
-		var scale:Float = 1;
-		/*if(optionShit.length > 6) {
-			scale = 6 / optionShit.length;
-		}*/
 
 		var tex = Paths.getSparrowAtlas('demo/button');
 
@@ -118,9 +115,9 @@ var titleJSON:TitleData;
 			var offset:Float = 108 - (Math.max(optionShit.length, 4) - 4) * 80;
 			var menuItem:FlxSprite = new FlxSprite(0, (i * 160)  + 65);
 			menuItem.frames = tex;
-			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic-stop", 24);
-			menuItem.animation.addByPrefix('selected', optionShit[i] + " basic0", 24);
-			menuItem.animation.addByPrefix('go', optionShit[i] + " basic-go", 24);
+			menuItem.animation.addByPrefix('idle', optionShit[i] + "-stop", 24);
+			menuItem.animation.addByPrefix('selected', optionShit[i] + "0", 24);
+			menuItem.animation.addByPrefix('go', optionShit[i] + "-go", 24);
 			menuItem.animation.play('idle');
 			menuItem.ID = i;
 			menuItem.screenCenter(X);
@@ -147,17 +144,17 @@ var titleJSON:TitleData;
 					menuItem.y += 53;
 			}
 		}
-        
-        cg = new FlxSprite();
+
+		cg = new FlxSprite();
 		cg.frames = Paths.getSparrowAtlas('demo/disc_freeplay');
 		cg.antialiasing = ClientPrefs.globalAntialiasing;
-		cg.animation.addByPrefix('idle',"monika-yt",24);	
+		cg.animation.addByPrefix('idle',"monika-yt",24);
 		cg.animation.play('idle');
 		cg.x -= 850;
 		cg.y -= 500;
 		cg.scale.set(0.9,0.9);
 		add(cg);
-		
+
 		FlxG.camera.follow(camFollowPos, null, 1);
 
 		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "Psych Engine v" + psychEngineVersion, 12);
@@ -165,10 +162,6 @@ var titleJSON:TitleData;
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
 		var versionShit:FlxText = new FlxText(12, FlxG.height - 24, 0, "Friday Night Funkin' v" + Application.current.meta.get('version'), 12);
-		versionShit.scrollFactor.set();
-		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		add(versionShit);
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 44, 0, "ModPack Demo by Monika", 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
@@ -240,12 +233,6 @@ var titleJSON:TitleData;
 			}
 
 			if (controls.ACCEPT)
-			{
-				if (optionShit[curSelected] == 'donate')
-				{
-					CoolUtil.browserLoad('https://ninja-muffin24.itch.io/funkin');
-				}
-				else
 				{
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
@@ -276,6 +263,7 @@ var titleJSON:TitleData;
 										MusicBeatState.switchState(new StoryMenuState());
 									case 'freeplay':
 										MusicBeatState.switchState(new FreeplayState());
+								
 									case 'credits':
 										MusicBeatState.switchState(new CreditsState());
 									case 'options':
@@ -301,7 +289,7 @@ var titleJSON:TitleData;
 		});
 	}
 
-	function changeItem(huh:Int = 0)
+		function changeItem(huh:Int = 0)
 	{
 		curSelected += huh;
 
@@ -310,32 +298,44 @@ var titleJSON:TitleData;
 		if (curSelected < 0)
 			curSelected = menuItems.length - 1;
 
+		switch (curSelected)
+		{
+		case 0:
+				cg.animation.play('idle');
+		}
+
 		menuItems.forEach(function(spr:FlxSprite)
 		{
 			spr.animation.play('idle');
+			spr.offset.x = 0;
+			spr.offset.y = 0;
 			spr.updateHitbox();
 
 			if (spr.ID == curSelected)
 			{
 				spr.animation.play('selected');
-				var add:Float = 0;
-				if(menuItems.length > 4) {
-				add = menuItems.length * 8;
-			spr.angle = -4;
-				cg.animation.play('idle');
-				FlxTween.tween(cg,{y: titleJSON.titley}, 1.4, {ease: FlxEase.expoInOut});
-			cg.angle = -4;
-			new FlxTimer().start(0.01, function(tmr:FlxTimer)
+				switch (spr.ID)
 				{
-					if(cg.angle == -4) 
-						FlxTween.angle(cg, cg.angle, 4, 4, {ease: FlxEase.quartInOut});
-					if (cg.angle == 4) 
-						FlxTween.angle(cg, cg.angle, -4, 4, {ease: FlxEase.quartInOut});
-				}, 0);
+					case 0:
+						spr.offset.x = 10;
+						spr.offset.y = 5;
 				}
-				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y - add);
-				spr.centerOffsets();
-			}
+				FlxG.log.add(spr.frameWidth);
+		
+
+				FlxTween.tween(spr,{y: -100}, 1.4, {ease: FlxEase.expoInOut});
+
+			spr.angle = -4;
+
+			new FlxTimer().start(0.01, function(tmr:FlxTimer)
+			{
+					if(spr.angle == -4) 
+						FlxTween.angle(spr, spr.angle, 4, 4, {ease: FlxEase.quartInOut});
+					if (spr.angle == 4) 
+						FlxTween.angle(spr, spr.angle, -4, 4, {ease: FlxEase.quartInOut});
+				}, 0);
+				
+				}
 		});
 	}
 }
