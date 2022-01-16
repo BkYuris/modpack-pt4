@@ -310,8 +310,8 @@ class MainMenuState extends MusicBeatState
 		{
 			case 0:
 				cg.animation.play('idle');
+				}
 		menuItems.forEach(function(spr:FlxSprite)
-		}
 		{
 			spr.animation.play('idle');
 			spr.updateHitbox();
