@@ -37,9 +37,7 @@ class OptionsState extends MusicBeatState
 	function openSelectedSubstate(label:String) {
 		switch(label) {
 		    case 'Booster':
-		        options.BoosterState.boostSwitch();
-				initOptions();
-				changeSelection();
+		        openSubState(new options.BoosterState());
 			case 'Note Colors':
 				openSubState(new options.NotesSubState());
 			case 'Controls':
