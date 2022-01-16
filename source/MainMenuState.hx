@@ -278,10 +278,6 @@ class MainMenuState extends MusicBeatState
 										MusicBeatState.switchState(new options.OptionsState());
 								}
 							});
-						}
-					});
-				}
-			}
 			else if (FlxG.keys.anyJustPressed(debugKeys) #if mobileC || _virtualpad.button7.justPressed #end)
 			{
 				selectedSomethin = true;
