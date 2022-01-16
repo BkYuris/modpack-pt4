@@ -40,12 +40,14 @@ class FreeplayState extends MusicBeatState
 	var lerpRating:Float = 0;
 	var intendedScore:Int = 0;
 	var intendedRating:Float = 0;
-
+    
 	private var grpSongs:FlxTypedGroup<Alphabet>;
 	private var curPlaying:Bool = false;
 
 	private var iconArray:Array<HealthIcon> = [];
-
+    
+    var discIcon:HealthIcon = new HealthIcon("monika-yt");	
+	var disc:FlxSprite = new FlxSprite(-200, 730);
 	var bg:FlxSprite;
 	var intendedColor:Int;
 	var colorTween:FlxTween;
@@ -111,7 +113,11 @@ class FreeplayState extends MusicBeatState
 			songText.isMenuItem = true;
 			songText.targetY = i;
 			grpSongs.add(songText);
-
+            
+            var tex = Paths.getSparrowAtlas('demo/disc_freeplay');
+		    disc.frames = tex;
+	    	disc.animation.addByPrefix("monika-yt", "monika-yt", 24);
+		
 			Paths.currentModDirectory = songs[i].folder;
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
 			icon.sprTracker = songText;
@@ -197,12 +203,18 @@ class FreeplayState extends MusicBeatState
 		text.setFormat(Paths.font("vcr.ttf"), size, FlxColor.WHITE, RIGHT);
 		text.scrollFactor.set();
 		add(text);
-
+		
+        add(disc);
+		add(discIcon);
+		discIcon.antialiasing = disc.antialiasing = true;
+		
 		#if mobileC
 		addVirtualPad(FULL, A_B_X_Y_D);
 		#end
 
 		super.create();
+		disc.scale.x = 0;
+		FlxTween.tween(disc, { 'scale.x':1, y: 480, x: -25}, 0.5, { ease: FlxEase.quartInOut});
 	}
 
 	override function closeSubState() {
@@ -234,10 +246,23 @@ class FreeplayState extends MusicBeatState
 	var instPlaying:Int = -1;
 	private static var vocals:FlxSound = null;
 	override function update(elapsed:Float)
-	{
+{
+		super.update(elapsed);
+		
+		if (FlxG.sound.music != null && FlxG.sound.music.playing)
+		{
+			Conductor.songPosition = FlxG.sound.music.time;
+		}
+
 		if (FlxG.sound.music.volume < 0.7)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
+		}
+		
+		switch (songs[curSelected].week)
+		{
+			case 0:
+		        disc.animation.play("monika-yt");						
 		}
 
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, CoolUtil.boundTo(elapsed * 24, 0, 1)));
@@ -309,6 +334,7 @@ class FreeplayState extends MusicBeatState
 				PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
 				if (PlayState.SONG.needsVoices)
 					vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+					FlxG.camera.shake(0.005, 0.1);
 				else
 					vocals = new FlxSound();
 
@@ -346,7 +372,10 @@ class FreeplayState extends MusicBeatState
 			if(colorTween != null) {
 				colorTween.cancel();
 			}
-			
+			discIcon.x = disc.x + disc.width/2 - discIcon.width/2;
+		discIcon.y = disc.y + disc.height/2 - discIcon.height/2;
+		discIcon.angle = disc.angle += 0.6;
+		discIcon.scale.set(disc.scale.x, disc.scale.y);
 			if (FlxG.keys.pressed.SHIFT){
 				LoadingState.loadAndSwitchState(new ChartingState());
 			}else{
@@ -447,8 +476,8 @@ class FreeplayState extends MusicBeatState
 				item.alpha = 1;
 				// item.setGraphicSize(Std.int(item.width));
 			}
+		discIcon.animation.play(songs[curSelected].songCharacter);
 		}
-		
 		Paths.currentModDirectory = songs[curSelected].folder;
 		PlayState.storyWeek = songs[curSelected].week;
 
